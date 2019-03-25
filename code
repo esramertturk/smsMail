@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/name"
+                android:hint="Name"
+                style="@style/goruntu"
+                />
+            <EditText
+                android:id="@+id/password"
+                android:hint="password"
+                style="@style/goruntu" />
+
+            <EditText
+                style="@style/goruntu"
+                android:text="az satır"
+                android:textIsSelectable="false"/>
+            <EditText
+                style="@style/goruntu"
+                android:text="çok satır"
+                android:textIsSelectable="true"/>
+                <TextView
+                    style="@style/goruntu"
+                    android:text="e@gmail.com"
+                    android:autoLink="email"
+                    />
+
+                <TextView
+                    style="@style/goruntu"
+                    android:text="00000000000"
+                    android:autoLink="phone"
+                    />
+
+                <TextView
+                    style="@style/goruntu"
+                    android:text="https://www.okan.edu.tr"
+                    android:autoLink="web"
+                    />
+
+                <EditText
+                    android:id="@+id/etVeri"
+                    android:hint="MESAJ GİRİNİZ.."
+                    style="@style/goruntu" />
+                <Button
+                    android:id="@+id/paylas"
+                    android:text="PAYLAS"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/etTelefon"
+                    android:inputType="phone"
+                    android:hint="tel giriniz"
+                    style="@style/goruntu" />
+
+                <Button
+                    android:id="@+id/izinliMesaj"
+                    android:text="izinli Mesaj"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/izinsizMesaj"
+                    android:text="izinsiz Mesaj"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/etMail"
+                    android:inputType="textEmailAddress"
+                    android:hint="Mail adresi"
+                    style="@style/goruntu"
+                    />
+                <EditText
+                    android:id="@+id/etKonu"
+                    android:inputType="textPersonName"
+                    android:hint="konuyu giriniz"
+                    style="@style/goruntu" />
+             <Button
+                    android:id="@+id/mailGonder"
+                    android:text="Mail gonder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>
+
+package com.example.user.styletanim;
+
+import android.app.Application;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.File;
+
+public class MainActivity extends AppCompatActivity {
+    EditText etVeri,etTel,etKonu,etMail;
+    Button btnPaylas, izinliMesaj,izinsizMesaj,btnMail;
+    String veri,telNo,konu,email;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        etVeri = findViewById(R.id.etVeri);
+        etTel = findViewById(R.id.etTelefon);
+        etKonu= findViewById(R.id.etKonu);
+        etMail = findViewById(R.id.etMail);
+        btnPaylas = findViewById(R.id.paylas);
+        izinliMesaj = findViewById(R.id.izinliMesaj);
+        izinsizMesaj = findViewById(R.id.izinsizMesaj);
+
+        btnMail = findViewById(R.id.mailGonder);
+
+        btnPaylas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                veri = etVeri.getText().toString();
+                paylasMesaj(veri);
+            }
+        });
+         izinliMesaj.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 veri = etVeri.getText().toString();
+                 telNo = etTel.getText().toString();
+                 smsIzinliGonder(veri,telNo);
+             }
+         });
+        izinsizMesaj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                veri = etVeri.getText().toString();
+                telNo = etTel.getText().toString();
+                smsIzinsizGonder(veri,telNo);
+            }
+        });
+        btnMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                veri = etVeri.getText().toString();
+                konu = etKonu.getText().toString();
+                email = etMail.getText().toString();
+
+                mailGonder(email,konu,veri);
+            }
+
+        });
+
+    }
+
+    private void mailGonder(String email, String konu, String veri) {
+        /*Intent mailIntent = new Intent(Intent.ACTION_SEND);
+        mailIntent.setType("message/rfc822");
+        mailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{email});
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, konu);
+        mailIntent.putExtra(Intent.EXTRA_TEXT,veri);
+        startActivity(mailIntent);*/
+
+        String filename="/Kategoriler/RehberExcel.xls";
+        File filelocation = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), filename);
+        Uri path = Uri.fromFile(filelocation);
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+        emailIntent .setType("vnd.android.cursor.dir/email");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,new String[]{email});
+// the attachment
+        emailIntent .putExtra(Intent.EXTRA_STREAM, path);
+// the mail subject
+        emailIntent .putExtra(Intent.EXTRA_SUBJECT, konu);
+        startActivity(Intent.createChooser(emailIntent , "Send email..."));
+    }
+
+    private void smsIzinsizGonder(String veri, String telNo) {
+        //manifestte izin verdik
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(telNo,null,veri,null,null);
+        Toast.makeText(this,"MESAJ GÖNDERİLDİ",Toast.LENGTH_LONG).show();
+    }
+
+    private void smsIzinliGonder(String veri, String telNo) {
+        telNo="smsto:"+telNo;
+        Intent izinliSms = new Intent(Intent.ACTION_SEND, Uri.parse(telNo));
+        izinliSms.putExtra("sms_body",veri);
+        startActivity(izinliSms);
+    }
+
+    private void paylasMesaj(String veri) {
+        //gönderilen texti belirtilen yere paylaşır.
+        Intent paylasIntent = new Intent(Intent.ACTION_SEND);
+        paylasIntent.setType("text/plain");
+        paylasIntent.putExtra(Intent.EXTRA_TEXT,veri);
+        startActivity(Intent.createChooser(paylasIntent,"Paylaşın!!!"));
+    }
+}
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.user.styletanim">
+
+    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="goruntu">
+        <item name="android:textSize">15dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ff00ff</item>
+        <item name="android:padding">5sp</item>
+    </style>
+
+</resources>
